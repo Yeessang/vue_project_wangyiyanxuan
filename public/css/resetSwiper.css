@@ -1,0 +1,42 @@
+.swiper-wrapper{
+    align-content: center !important;
+}
+.swiper-item:nth-child(n+9){
+    margin-top: 10px !important;
+}
+.swiper-pagination{
+    display: flex;
+    width: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}
+.paganation-item{
+    width: 25px !important;
+    height: 2px !important;
+    margin: 0 3px;
+    border-radius: 2px;
+    background-color: rgba(200,200,200,.3) !important;
+}
+.paganation-item-active{
+    background-color: #fff !important;
+}                    
+/*包裹自定义分页器的div的位置等CSS样式*/ 
+.swiper-pagination-custom { 
+    bottom: 10px; 
+    left: 0; 
+    width: 100%; 
+} 
+/*自定义分页器的样式，这个你自己想要什么样子自己写*/ 
+.swiper-pagination-customs { 
+    width: 30px; 
+    height: 4px; 
+    display: inline-block; 
+    background: #000; 
+    opacity: .3; 
+    margin: 0 5px; 
+} 
+/*自定义分页器激活时的样式表现*/ 
+.swiper-pagination-customs-active { 
+    opacity: 1; 
+    background-color: #F78E00; 
+} 
