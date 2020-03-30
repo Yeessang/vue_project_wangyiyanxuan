@@ -42,7 +42,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="notAuthor" v-else :style="{backgroundColor:'#'+worth.data.topicId}">
+                        <div class="notAuthor" v-else-if="(!worth.data.nickname && worth.data.title)" :style="{backgroundColor:'#'+worth.data.topicId}">
                             <div class="title">{{worth.data.title}}</div>
                             <div class="line"></div>
                             <div class="subTitle">{{worth.data.subTitle}}</div>
@@ -96,6 +96,8 @@
                             value.forEach((topic) => {
                                 newList.push({isLook:false,data:topic})
                             })
+                        }else if(key === 'ad' && value !== null){
+                            newList.push({isLook:false,data:value})
                         }
                     }
                 })
@@ -109,15 +111,16 @@
                     this.navList = result.data.navList
                 }
             },
+            async getInitWorthList(){
+                const result = await this.$http.worthBuying.getInitWorthList()
+                this.worthList = result.data
+                console.log(result)
+            },
             async getWorthList(data){
                 const result = await this.$http.worthBuying.getWorthList(data)
                 console.log(result)
                 if(result.code === "200"){
-                    if(this.worthList.length !== 0){
-                        this.worthList.push(...result.data.result)
-                    }else{
-                        this.worthList = result.data.result
-                    }
+                    this.worthList.push(...result.data.result)
                 }
             },
             initScroll(){
@@ -155,6 +158,7 @@
         },
         async mounted(){
             await this.getNavList()
+            await this.getInitWorthList()
             await this.getWorthList({page:this.page,size:this.size})
             this.$nextTick(()=>{
                 this.swiper = this.$refs.mySwiper.$swiper

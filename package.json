@@ -12,6 +12,7 @@
     "better-scroll": "^1.15.2",
     "core-js": "^3.6.4",
     "lib-flexible": "^0.3.2",
+    "moment": "^2.24.0",
     "postcss-plugin-px2rem": "^0.8.1",
     "px2rem-loader": "^0.1.9",
     "stylus": "^0.54.7",

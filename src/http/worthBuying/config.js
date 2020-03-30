@@ -15,6 +15,19 @@ export default {
                 },
             }
         },
+        getInitWorthList:{
+            url:'/topic/v1/find/recManual.json',
+            method:'get',
+            crosUrl:'/api',
+            hooks:{
+                beforeReq(callback){
+                    callback && callback()
+                },
+                receiveRes(callback){
+                    callback && callback()
+                },
+            }
+        },
         getWorthList:{
             url:'/topic/v1/find/recAuto.json',
             method:'get',
