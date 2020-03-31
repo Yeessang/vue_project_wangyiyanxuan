@@ -1,3 +1,5 @@
+
 export default {
-    storeCategoryId:''
+    storeCategoryId:'',
+    shopCartList:localStorage.getItem('cartList') ? JSON.parse(localStorage.getItem('cartList')) : []
 }

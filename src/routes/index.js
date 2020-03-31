@@ -7,6 +7,8 @@ const Cart = () => import('pages/wangyi_cart/wangyi_cart')
 const Personal = () => import('pages/wangyi_personal/wangyi_personal')
 const Login = () => import('pages/wangyi_login/wangyi_login')
 
+// const ShopDetail = () => import('pages/wangyi_shop_detail/wangyi_shop_detail')
+import ShopDetail from 'pages/wangyi_shop_detail/wangyi_shop_detail'
 const routes = [
     {path:'/home',component:Home,meta:{showFooter:true},
         children:[
@@ -30,6 +32,7 @@ const routes = [
     {path:'/cart',component:Cart,meta:{showFooter:true}},
     {path:'/personal',component:Personal,meta:{showFooter:true}},
     {path:'/login',component:Login,meta:{showFooter:false}},
+    {path:'/shopDetail/:id',component:ShopDetail,meta:{shoFooter:false}},
     {path:'/',redirect:'/home'}
 ]
 

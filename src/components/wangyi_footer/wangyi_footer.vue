@@ -1,14 +1,30 @@
 <template>
     <div class="footer-tabs">
-        <div class="footer-item" :class="{active:$route.path.includes('/home')}" @click="toPage('/home')">首页</div>
-        <div class="footer-item" :class="{active:$route.path.includes('/category')}" @click="toPage('/category')">分类</div>
-        <div class="footer-item" :class="{active:$route.path.includes('/worthBuying')}" @click="toPage('/worthBuying')">值得买</div>
-        <div class="footer-item" :class="{active:$route.path.includes('/cart')}" @click="toPage('/cart')">购物车</div>
-        <div class="footer-item" :class="{active:$route.path.includes('/personal')}" @click="toPage('/personal')">个人中心</div>
+        <div class="footer-item" :class="{active:$route.path.includes('/home')}" @click="toPage('/home')">
+            <Icon name="wap-home" class="icon"></Icon>
+            <span>首页</span>
+        </div>
+        <div class="footer-item" :class="{active:$route.path.includes('/category')}" @click="toPage('/category')">
+            <Icon name="bars" class="icon"></Icon>
+            <span>分类</span>
+        </div>
+        <div class="footer-item" :class="{active:$route.path.includes('/worthBuying')}" @click="toPage('/worthBuying')">
+            <Icon name="youzan-shield" class="icon"></Icon>
+            <span>值得买</span>
+        </div>
+        <div class="footer-item" :class="{active:$route.path.includes('/cart')}" @click="toPage('/cart')">
+            <Icon name="shopping-cart" class="icon"></Icon>
+            <span>购物车</span>
+        </div>
+        <div class="footer-item" :class="{active:$route.path.includes('/personal')}" @click="toPage('/personal')">
+            <Icon name="manager" class="icon"></Icon>
+            <span>个人</span>
+        </div>
     </div>
 </template>
 
 <script>
+    import {Icon} from 'vant'
     export default {
         name:"wangyi-footer",
         methods: {
@@ -16,6 +32,9 @@
                 this.$router.replace(path)
             }
         },
+        components:{
+            Icon
+        }
     }
 </script>
 
@@ -34,8 +53,13 @@
             width 20%
             height 100%
             text-align center
-            line-height 50px
-            font-size 14px
+            font-size 12px
+            display flex
+            flex-direction column
+            justify-content center
+            .icon
+                font-size 24px
+                margin-bottom 2px
             &.active
                 color #f40
 </style>

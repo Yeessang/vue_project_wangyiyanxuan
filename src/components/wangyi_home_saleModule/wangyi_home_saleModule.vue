@@ -11,7 +11,7 @@
       </div>
     </header>
     <ul class="flashSaleList" v-if="!(module instanceof Array)">
-      <li class="sale-item" v-for="item in module.itemList" :key="item.itemId">
+      <li class="sale-item" v-for="item in module.itemList" :key="item.itemId" @click="toDetail(item)">
         <a href="javascript:;">
           <div class="item-img">
             <img :src="item.picUrl" alt />
@@ -24,7 +24,7 @@
       </li>
     </ul>
     <ul class="flashSaleList" v-if="(module instanceof Array)">
-      <li class="sale-item" v-for="item in module" :key="item.id">
+      <li class="sale-item" v-for="item in module" :key="item.id" @click="toDetail(item)">
         <a href="javascript:;" style="color:#000">
           <div class="item-img">
             <img :src="item.scenePicUrl" alt />
@@ -56,6 +56,13 @@ export default {
             return this.module ? moment(this.module.remainTime).format("SS") : '00'
         },
     },
+    methods:{
+      toDetail(item){
+        this.$bus.currentShop = item
+        console.log(this.$bus)
+        this.$router.push(`/shopDetail/${item.id ? item.id : item.itemId}`)
+      }
+    }
 };
 </script>
 

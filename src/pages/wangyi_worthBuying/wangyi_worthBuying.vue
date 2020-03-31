@@ -38,6 +38,7 @@
                                     <span>{{worth.data.nickname}}</span>
                                 </div>
                                 <div class="author-right">
+                                    <Icon name="eye-o" class="icon"></Icon>
                                     <span>{{worth.data.readCount > 10000 ? Math.round(worth.data.readCount / 1000) + 'k' : worth.data.readCount}}</span>
                                 </div>
                             </div>
@@ -61,6 +62,7 @@
 <script>
     import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
     import BScroll from 'better-scroll'
+    import {Icon} from 'vant'
     import 'swiper/css/swiper.css'
     export default {
         name:'wangyi-worthBuying',
@@ -167,7 +169,8 @@
         },
         components: {
             Swiper,
-            SwiperSlide
+            SwiperSlide,
+            Icon
         },
     }
 </script>
@@ -297,6 +300,11 @@
                                     overflow hidden
                                     white-space nowrap
                                     text-overflow ellipsis
+                            .author-right
+                                .icon
+                                    position relative
+                                    top 2px
+                                    margin-right 3px
                     .notAuthor
                         padding 14px 9px 18px
                         .title

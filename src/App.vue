@@ -1,6 +1,6 @@
 <template>
     <div class="app">
-      <keep-alive>
+      <keep-alive exclude="wangyi-shop-detail">
         <router-view></router-view>
       </keep-alive>
       <app-footer></app-footer>

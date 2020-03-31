@@ -54,11 +54,11 @@
                 this.initShowListScroll()
             })
         },
-        watch: {
-            categoryId(value){
-                this.getCategoryList()
-            }
-        },
+        // watch: {
+        //     categoryId(value){
+        //         this.getCategoryList()
+        //     }
+        // },
         beforeRouteEnter (to, from, next) {
             if(store.state.storeCategoryId){
                 if(+store.state.storeCategoryId === +to.params.id){

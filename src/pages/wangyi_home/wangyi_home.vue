@@ -23,8 +23,8 @@
             </div>
             <div class="toggle-wrap">
                 <div class="toggle-left"></div>
-                <div class="toggle-right" @click="isShowAllList = !isShowAllList">
-                    <span class="toggle-btn" :class="{toggleRotate:isShowAllList}">↓</span>
+                <div class="toggle-right" @click="toggleShowAllList">
+                    <Icon name="arrow-down" class="toggle-btn" :class="{toggleRotate:isShowAllList}"></Icon>
                 </div>
             </div>
             <div class="toggle-all-category" v-show="isShowAllList">
@@ -169,6 +169,11 @@
             </div>
             
         </div>
+        <transition name="toTop">
+            <div class="gotoTop" v-show="isShowToTop" @click="gotoTop">
+                <Icon name="arrow-up"></Icon>
+            </div>
+        </transition>
     </div>
 </template>
 
@@ -177,7 +182,9 @@
     import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
     import moment from 'moment'
     import HomeModule from 'components/wangyi_home_saleModule/wangyi_home_saleModule'
+    import { Icon } from 'vant'
     import 'swiper/css/swiper.css'
+    import '../../common/transition.stylus'
     export default {
         name:'wangyi-home',
         data(){
@@ -185,6 +192,7 @@
                 homeNavList:[],
                 isShowAllList:false,
                 isRecommend:true,
+                isShowToTop:false,
                 bannerList:[],
                 policyDescList:[],
                 kingkongList:[],
@@ -233,6 +241,14 @@
             }
         },
         methods:{
+            toggleShowAllList(){
+                if(this.showAllListTimer) return 
+                const {isShowAllList} = this
+                this.showAllListTimer = setTimeout(() => {
+                    this.isShowAllList = !isShowAllList
+                    this.showAllListTimer = null
+                },300)
+            },
             async getIndexCategoryList(){
                 const result = await this.$http.category.getIndexCategory()
                 if(result.code === 200){
@@ -276,19 +292,31 @@
                     click: true,                 
                     probeType: 3,
                 })
+                this.recommendScroll.on('scroll',(object) => {
+                    if(this.recommendScrollTimerId) return
+                    this.recommendScrollTimerId = setTimeout(() => {
+                        if(Math.abs(object.y) < 600 && this.isShowToTop) this.isShowToTop = false
+                        if(Math.abs(object.y) >= 600 && !this.isShowToTop) this.isShowToTop = true
+                        this.recommendScrollTimerId = null
+                    },200)
+                })
                 this.$nextTick(() => {
                     this.recommendScroll.refresh()
                 })
             },
             changeBigModuleUpShowPic(){
+                clearInterval(this.changePicTimerId)
                 let index = 0
-                setInterval(() => {
+                this.changePicTimerId = setInterval(() => {
                     index++
                     if(index > this.bigPromotionModule.floorList[0].cells[0].itemList.length - 1){
                         index = 0
                     }
                     this.currentModulePic = this.bigPromotionModule.floorList[0].cells[0].itemList[index].picUrl
                 },2000)
+            },
+            gotoTop(){
+                this.recommendScroll.scrollTo(0,0,300)
             }
         },
         async mounted(){
@@ -313,7 +341,7 @@
                 })
                 this.navScroll.scrollToElement(this.$refs.navItemArr[currentNavIndex],300,true)
             }else{
-                this.navScroll.scrollToElement(this.$refs.recommendNav,300,true)
+                this.navScroll.scrollToElement(this.$refs.recommendNav,1000,true)
             }
             this.$nextTick(() => {
                 this.recommendScroll.refresh()
@@ -338,7 +366,8 @@
         components:{
             SwiperSlide,
             Swiper,
-            HomeModule
+            HomeModule,
+            Icon
         }
     }
 </script>
@@ -349,6 +378,18 @@
         height 100%
         overflow hidden
         margin-top 44px
+        .gotoTop
+            position fixed
+            width 40px
+            height 40px
+            background-color #ebebeb
+            color #666
+            border-radius 50%
+            right 10px 
+            bottom 60px
+            font-size 25px
+            text-align center
+            line-height 45px
         .home-navs-wrap
             width 100%
             height 30px
@@ -403,6 +444,7 @@
                     width 50px
                     height 30px
                     background-color #fff
+                    font-size 16px
                     .toggle-btn
                         display inline-block
                         width 100%
