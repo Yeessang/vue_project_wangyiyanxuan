@@ -17,7 +17,6 @@ worthBuyingAxios.interceptors.request.use((config)=>{
 })
 
 worthBuyingAxios.interceptors.response.use((response)=>{
-    console.log(response)
     worthBuying.hooks.receiveContactRes()
     return response.data
 },(error) => {

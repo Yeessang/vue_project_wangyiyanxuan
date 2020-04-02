@@ -8,7 +8,7 @@
 
 <script>
     import Count from 'components/wangyi_count/wangyi_count'
-    import {Button} from 'vant'
+    import {Button,Dialog} from 'vant'
     import {mapActions} from 'vuex'
     import {ADDSHOPTOCART} from 'store/mutation_types'
     export default {
@@ -33,6 +33,14 @@
             }
         },
         mounted(){
+            Dialog.confirm({
+                title: '注意！',
+                message: '由于没有商品对应的API，所以请确定您是从首页新品模块和大促模块点击商品进来的本页，点击取消即跳转回首页，点击确认即仍在该详情页'
+            }).then(() => {
+                
+            }).catch(() => {
+                this.$router.replace('/home')
+            });
             console.log(this.$bus.currentShop)
         }
     }

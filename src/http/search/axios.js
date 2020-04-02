@@ -17,7 +17,6 @@ searchAxios.interceptors.request.use((config)=>{
 })
 
 searchAxios.interceptors.response.use((response)=>{
-    console.log(response)
     search.hooks.receiveContactRes()
     return response.data
 },(error) => {

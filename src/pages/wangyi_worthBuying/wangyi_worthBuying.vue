@@ -93,6 +93,9 @@
             }
         },
         computed:{
+            // 这里是整合全部数据到展示的瀑布流数据列表，但是每一次新加都要重新去加工这个最终的数组
+            // 所以，优化后，只对新获取的页数的数据去加工，简化遍历数量
+            // 未 做好 完整的优化
             showWorthList(){
                 let newList = []
                 this.worthList.forEach((worthItem) => {
@@ -121,11 +124,9 @@
             async getInitWorthList(){
                 const result = await this.$http.worthBuying.getInitWorthList()
                 this.worthList = result.data
-                console.log(result)
             },
             async getWorthList(data){
                 const result = await this.$http.worthBuying.getWorthList(data)
-                console.log(result)
                 if(result.code === "200"){
                     this.worthList.push(...result.data.result)
                 }
@@ -150,6 +151,25 @@
                 })
                 console.log(this.scroll)
             },
+            // 本想在这里做优化 但是做了优化 可能每次单数列都比偶数列 多一个 这样会导致 单数列比偶数列多一些干扰视觉效果
+            // 所以还是采取之前的做法
+            // processNewPageDataToArray(newPageData){
+            //     let newList = []
+            //     newPageData.forEach((worthItem) => {
+            //         for(let [key,value] of Object.entries(worthItem)){
+            //             if(key === 'look' && typeof value === 'object' && value !== null){
+            //                 newList.push({isLook:true,data:value})
+            //             }else if(key === 'topics' && value.length !== 0){
+            //                 value.forEach((topic) => {
+            //                     newList.push({isLook:false,data:topic})
+            //                 })
+            //             }else if(key === 'ad' && value !== null){
+            //                 newList.push({isLook:false,data:value})
+            //             }
+            //         }
+            //     })
+            //     return newList
+            // },
             splitGroup(array, subGroupLength) {
                 let index = 0;
                 let newArray = new Array(subGroupLength)

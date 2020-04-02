@@ -1,5 +1,5 @@
 <template>
-    <header class="wangyi-header" :style="{height:height + 'px'}">
+    <header class="wangyi-header" :style="{height:height/37.5 + 'rem'}">
         <slot name="resetHeader">
             <div class="header-left">
                 <Icon name="wap-home-o" class="icon" @click="toHome"></Icon>

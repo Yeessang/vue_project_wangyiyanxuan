@@ -1,8 +1,8 @@
 <template>
     <div class="category-list" ref="showList">
         <div class="category-list-container">
-            <div class="bannerImg">
-            <img :src="currentBannerUrl" alt="">
+            <div class="bannerImg"  v-if="currentBannerUrl">
+                <img :src="currentBannerUrl" alt="">
             </div>
             <div class="show-list"> 
                 <div class="show-item" v-for="(item,index) in subCategoryList" :key="index">
@@ -45,6 +45,7 @@
                 this.showListScroll = new BScroll(this.$refs.showList,{
                     click: true,                 
                     probeType: 3,
+                    bounce:false
                 })
             }
         },
@@ -56,10 +57,11 @@
         },
         watch: {
             categoryId(value){
+                if(!value) return
                 this.getCategoryList()
                 this.$nextTick(() => {
-                    this.showListScroll.refresh()
                     this.showListScroll.scrollTo(0,0)
+                    this.showListScroll.refresh()
                 })
             }
         },
@@ -84,7 +86,7 @@
 <style lang="stylus" scoped>
     .category-list
         flex 1
-        padding 15px 15px 10px
+        padding 15px 14.5px 10px
         .category-list-container
             width 100% 
             .bannerImg

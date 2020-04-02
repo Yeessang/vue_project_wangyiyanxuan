@@ -71,6 +71,7 @@
                     this.getSearchWithKeyword({keywordPrefix:searchKeyword})   
                 },300)
                 if(this.searchTimerId) return 
+                clearTimeout(this.searchLastTimerId)
                 this.searchTimerId = setTimeout(() => {
                     this.searchTimerId = null
                     this.getSearchWithKeyword({keywordPrefix:searchKeyword})   

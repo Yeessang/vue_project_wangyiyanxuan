@@ -32,7 +32,7 @@
                         v-for="(nav,index) in homeNavList" 
                         :key="nav.id" 
                         :class="{'home-nav-active':$route.params.id == nav.id}"
-                        @click="gotoCategory(nav.id)"
+                        @click="gotoCategory(nav.id,index)"
                         ref="navItemArr"
                     >
                         <span>{{nav.name}}</span>
@@ -62,7 +62,8 @@
                     </ul>
                 </div>
             </div>
-            <div class="home-recommend" v-if="isRecommend" ref="recommendWrap">
+            <div class="home-toggle-mask" v-show="isShowAllList" @click="toggleShowAllList"></div>
+            <div class="home-recommend" v-show="isRecommend && !$route.params.id" ref="recommendWrap">
                 <div class="home-recommend-container">
                     <Swiper class="home-banner" ref="mySwiper" :options="swiperOptions" v-if="bannerList.length !== 0">
                         <SwiperSlide class="banner-item" v-for="banner in bannerList" :key="banner.id">
@@ -191,6 +192,7 @@
                     <Icon name="arrow-up"></Icon>
                 </div>
             </transition>
+            <router-view v-if="!isRecommend || $route.params.id" :category="currentCategory"></router-view>
         </div>
     </div>
     
@@ -225,6 +227,8 @@
                 newItemList:null,
                 sceneLightShoppingGuideModule:{},
                 indexActivityModule:null,
+                categoryModule:null,
+                currentCategory:{},
                 swiperOptions:{
                     loop:true,
                     autoplay: 1000,
@@ -291,12 +295,22 @@
                 this.newItemList = result.data.newItemList
                 this.sceneLightShoppingGuideModule = result.data.sceneLightShoppingGuideModule
                 this.indexActivityModule = result.data.indexActivityModule
+                this.categoryModule = result.data.categoryModule
+                let currentNavIndex = 0
+                if(this.$route.params.id){
+                    currentNavIndex = this.homeNavList.findIndex((item) => {
+                        return item.id == this.$route.params.id
+                    })
+                    this.currentCategory = this.categoryModule[currentNavIndex]
+                }
+               
             },
-            gotoCategory(id){
+            gotoCategory(id,index){
                 this.isShowAllList = false
                 if(id == this.$route.params.id) return
                 this.$router.push(`/home/indexCategory/${id}`)
                 this.isRecommend = false
+                this.currentCategory = this.categoryModule[index]
             },
             gotoRecommend(){
                 this.isShowAllList = false
@@ -307,7 +321,8 @@
                 this.navScroll = new BScroll(this.$refs.navWrap,{
                     click: true,                 
                     probeType: 3,
-                    scrollX:true
+                    scrollX:true,
+                    bounce:false
                 })
             },
             initRecommendScroll(){
@@ -353,7 +368,16 @@
             this.initNavScroll()
             this.initRecommendScroll()
             this.$nextTick(() => {
-                this.navScroll.refresh()
+                // this.navScroll.refresh()
+                let currentNavIndex = 0
+                if(this.$route.params.id){
+                    currentNavIndex = this.homeNavList.findIndex((item) => {
+                        return item.id == this.$route.params.id
+                    })
+                    this.navScroll.scrollToElement(this.$refs.navItemArr[currentNavIndex],300,true)
+                }else{
+                    this.navScroll.scrollToElement(this.$refs.recommendNav,0,true)
+                }
                 this.recommendScroll.refresh()
                 this.changeBigModuleUpShowPic()
             })
@@ -369,7 +393,7 @@
                 })
                 this.navScroll.scrollToElement(this.$refs.navItemArr[currentNavIndex],300,true)
             }else{
-                this.navScroll.scrollToElement(this.$refs.recommendNav,1000,true)
+                this.navScroll.scrollToElement(this.$refs.recommendNav,0,true)
             }
             this.$nextTick(() => {
                 this.recommendScroll.refresh()
@@ -448,6 +472,15 @@
         height 100%
         overflow hidden
         margin-top 44px
+        position relative
+        .home-toggle-mask
+            position absolute
+            width 100%
+            height 100%
+            left 0
+            top 0
+            z-index 2
+            background-color rgba(0,0,0,.5)
         .gotoTop
             position fixed
             width 40px
@@ -526,7 +559,7 @@
                         &.toggleRotate
                             transform translate3d(0,0,0) rotate(180deg)
             .toggle-all-category
-                width 100%
+                width 100% 
                 position absolute
                 left 0
                 top 0
@@ -534,7 +567,6 @@
                 box-sizing border-box
                 overflow visible
                 z-index 5
-                
                 .title
                     padding 0 15px
                     width 100%
