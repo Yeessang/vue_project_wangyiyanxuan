@@ -9,6 +9,7 @@
 <script>
     import {mapActions} from 'vuex'
     import {ADDSHOPTOCART} from 'store/mutation_types'
+    import {Toast} from 'vant'
     export default {
         name:'wangyi-count',
         props:{
@@ -40,6 +41,9 @@
             decCount(){
                 if(this.needAllCount){
                     this.count--
+                    if(this.count <= 1){
+                        Toast('该商品一件起购')
+                    }
                 }else{
                     this.countInit--
                     this.processShop.count--

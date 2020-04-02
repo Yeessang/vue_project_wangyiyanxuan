@@ -1,0 +1,8 @@
+@keyframes person-move{
+    from{
+        transform: translateX(0px);
+    }
+    to{
+        transform: translateX(5px);
+    }
+}

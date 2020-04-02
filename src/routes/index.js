@@ -6,7 +6,8 @@ const WorthBuying = () => import('pages/wangyi_worthBuying/wangyi_worthBuying')
 const Cart = () => import('pages/wangyi_cart/wangyi_cart')
 const Personal = () => import('pages/wangyi_personal/wangyi_personal')
 const Login = () => import('pages/wangyi_login/wangyi_login')
-
+const Search = () => import('pages/wangyi_search/wangyi_search')
+import store from '../store'
 // const ShopDetail = () => import('pages/wangyi_shop_detail/wangyi_shop_detail')
 import ShopDetail from 'pages/wangyi_shop_detail/wangyi_shop_detail'
 const routes = [
@@ -24,14 +25,33 @@ const routes = [
             {
                 path:'categoryList/:id',
                 component:CategoryList,
-                props:true
+                props:true,
+                meta:{showFooter:true}
             },
         ],
     },
     {path:'/worthBuying',component:WorthBuying,meta:{showFooter:true}},
     {path:'/cart',component:Cart,meta:{showFooter:true}},
-    {path:'/personal',component:Personal,meta:{showFooter:true}},
-    {path:'/login',component:Login,meta:{showFooter:false}},
+    {path:'/personal',component:Personal,meta:{showFooter:true},
+        beforeEnter: (to, from, next) => {
+            const {userInfo} = store.state
+            if(userInfo === null){
+                next('/login')
+            }else{
+                next()
+            }
+        }},
+    {path:'/login',component:Login,meta:{showFooter:false},
+        beforeEnter: (to, from, next) => {
+            const {userInfo} = store.state
+            if(userInfo === null){
+                next()
+            }else{
+                next(false)
+            }
+        }
+    },
+    {path:'/search',component:Search,meta:{showFooter:false}},
     {path:'/shopDetail/:id',component:ShopDetail,meta:{shoFooter:false}},
     {path:'/',redirect:'/home'}
 ]

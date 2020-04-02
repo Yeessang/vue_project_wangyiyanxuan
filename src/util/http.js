@@ -20,7 +20,7 @@ export default (insOfAxios,api) => {
     console.log(newPrototype)
     Object.setPrototypeOf(processedApi[name],newPrototype) */
     for(let [name,itemApi] of Object.entries(api)){
-        let {url,method,isForm,hooks,crosUrl,needToken} = itemApi
+        let {url,method,isForm,hooks,crosUrl,needToken,postWithUrlencoded} = itemApi
         processedApi[name] = async (data = {},paramsStr) => {
             if(!(data instanceof Object)){
                 throw new Error('参数必须是一个对象')
@@ -34,6 +34,12 @@ export default (insOfAxios,api) => {
                 for(let key in data){
                     transformData.append(key,data[key])
                 }
+            }else if(postWithUrlencoded && Object.keys(data) !== 0){
+                let urlencodedStr = ''
+                for(let [key,value] of Object.entries(data)){
+                    urlencodedStr += `${key}=${value}&`
+                }
+                transformData = urlencodedStr.split('').slice(0,-1).join('')
             }else{
                 transformData = data
             }
@@ -75,6 +81,10 @@ export default (insOfAxios,api) => {
                     if(needToken){
                         configAxios.headers.Authorization = localStorage.getItem('token') || ''
                     }
+                    if(postWithUrlencoded){
+                        configAxios.headers['content-type'] = 'application/x-www-form-urlencoded'
+                    }
+                    console.log(configAxios)
                     result = await insOfAxios(configAxios)
                     processedApi[name].receiveRes && processedApi[name].receiveRes()
                     break;

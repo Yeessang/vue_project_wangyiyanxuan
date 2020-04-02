@@ -1,4 +1,4 @@
-import {SAVECATEGORYID,ADDSHOPTOCART,DELSHOP,CHANGEBUYCHOSEN} from './mutation_types'
+import {SAVECATEGORYID,ADDSHOPTOCART,DELSHOP,CHANGEBUYCHOSEN,CHANGELOGIN} from './mutation_types'
 
 export default {
     [SAVECATEGORYID](store,data){
@@ -12,5 +12,8 @@ export default {
     },
     [CHANGEBUYCHOSEN](store){
         store.commit(CHANGEBUYCHOSEN)
+    },
+    [CHANGELOGIN](store,userInfo){
+        store.commit(CHANGELOGIN,userInfo)
     }
 }

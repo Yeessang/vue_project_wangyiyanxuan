@@ -1,180 +1,199 @@
 <template>
-    <div class="home-container">
-        <div class="home-navs-wrap" ref="navWrap">
-            <div class="home-navs-container">
-                <div 
-                    class="home-nav-item" 
-                    :class="{'home-nav-active':(/^\/home$/).test($route.path)}" 
-                    @click="gotoRecommend"
-                    ref="recommendNav"
-                >
-                    <span>推荐</span>
+    <div class="home-wrap">
+        <CommonHeader class="home-header" :height="44">
+            <template slot="resetHeader">
+                <h1>
+                    <a href="">
+                        <img src="../../static/images/logo.jpg" alt="">
+                    </a>
+                </h1>
+                <div class="header-search">
+                    <Icon name="search" class="icon"></Icon>
+                    <input type="text" placeholder="全网搜索，共有25858件好物" @click="$router.push('/search')"/>    
+                </div> 
+                <div class="loginMessage" v-if="userInfo === null">
+                    <span @click="judegLogin">登录</span>
                 </div>
-                <div 
-                    class="home-nav-item" 
-                    v-for="(nav,index) in homeNavList" 
-                    :key="nav.id" 
-                    :class="{'home-nav-active':$route.params.id == nav.id}"
-                    @click="gotoCategory(nav.id)"
-                    ref="navItemArr"
-                >
-                    <span>{{nav.name}}</span>
-                </div>
-            </div>
-            <div class="toggle-wrap">
-                <div class="toggle-left"></div>
-                <div class="toggle-right" @click="toggleShowAllList">
-                    <Icon name="arrow-down" class="toggle-btn" :class="{toggleRotate:isShowAllList}"></Icon>
-                </div>
-            </div>
-            <div class="toggle-all-category" v-show="isShowAllList">
-                <div class="title">全部频道</div>
-                <ul class="category-list">
-                    <li class="item" :class="{'item-active':(/^\/home$/).test($route.path)}" @click="gotoRecommend">
+            </template>
+        </CommonHeader>
+        <div class="home-container">
+            <div class="home-navs-wrap" ref="navWrap">
+                <div class="home-navs-container">
+                    <div 
+                        class="home-nav-item" 
+                        :class="{'home-nav-active':(/^\/home$/).test($route.path)}" 
+                        @click="gotoRecommend"
+                        ref="recommendNav"
+                    >
                         <span>推荐</span>
-                    </li>
-                    <li 
-                        class="item" 
+                    </div>
+                    <div 
+                        class="home-nav-item" 
                         v-for="(nav,index) in homeNavList" 
                         :key="nav.id" 
-                        :class="{'item-active':$route.params.id == nav.id}"
+                        :class="{'home-nav-active':$route.params.id == nav.id}"
                         @click="gotoCategory(nav.id)"
+                        ref="navItemArr"
                     >
                         <span>{{nav.name}}</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="home-recommend" v-if="isRecommend" ref="recommendWrap">
-            <div class="home-recommend-container">
-                <Swiper class="home-banner" ref="mySwiper" :options="swiperOptions" v-if="bannerList.length !== 0">
-                    <SwiperSlide class="banner-item" v-for="banner in bannerList" :key="banner.id">
-                        <a :href="banner.targetUrl">
-                            <img :src="banner.picUrl" alt="">
-                        </a>
-                    </SwiperSlide>
-                    <div class="swiper-pagination" slot="pagination"></div>
-                </Swiper>
-                <ul class="home-policyDescList">
-                    <li class="policyDescList-item" v-for="(item,index) in policyDescList" :key="index">
-                        <img :src="item.icon" alt="">
-                        <span class="item-text">{{item.desc}}</span>
-                    </li>  
-                </ul>
-                <ul class="home-kingkongList" v-if="kingkongList.length !== 0">
-                    <li class="kingkong-item" v-for="(item,index) in kingkongList" :key="index">
-                        <a :href="item.schemeUrl">
-                            <img :src="item.picUrl" alt="">
-                            <p class="kingkong-text" :style="{color:'#' + item.textColor}">{{item.text}}</p>
-                        </a>
-                    </li>
-                </ul>
-                <div class="bigPromotionModule" v-if="bigPromotionModule.floorList">
-                    <div class="bigPromotionModule-top">
-                        <img :src="bigPromotionModule.floorList[0].cells[0].picUrl" class="bigModule-back">
-                        <img class="bigModule-up" :src="currentModulePic">
-                    </div>
-                    <div class="bigPromotionModule-middle">
-                        <img class="middle-gif" :src="bigPromotionModule.floorList[1].cells[0].picUrl">
-                    </div>
-                    <div class="bigPromotionModule-bottom">
-                        <div class="bottom-item" v-for="(item,secondIndex) in bigPromotionModule.floorList[2].cells" :key="secondIndex + 'second'">
-                            <img :src="item.picUrl" alt="">
-                        </div>
-                        <div class="bottom-item" v-for="(item,index) in bigPromotionModule.floorList[3].cells" :key="index">
-                            <img :src="item.picUrl" alt="">
-                        </div>
                     </div>
                 </div>
-                <div class="home-activity" v-if="indexActivityModule">
-                    <header class="title">- 新人专享礼 -</header>
-                    <div class="activity-show">
-                        <div class="activity-img-big">
-                            <p>新人专享礼包</p>
-                            <img src="https://yanxuan.nosdn.127.net/352b0ea9b2d058094956efde167ef852.png" alt="">
-                        </div>
-                        <div class="activity-img">
-                            <div 
-                                class="activity-img-small" 
-                                v-for="(item,index) in indexActivityModule"
-                                :key="index"
-                            >
-                                <div class="text">
-                                    <p class="activity-title">{{item.title}}</p>
-                                    <p class="subTitle" v-if="item.subTitle">{{item.subTitle}}</p>
-                                    <p class="tag" v-if="item.tag">{{item.tag}}</p>
-                                </div>
+                <div class="toggle-wrap">
+                    <div class="toggle-left"></div>
+                    <div class="toggle-right" @click="toggleShowAllList">
+                        <Icon name="arrow-down" class="toggle-btn" :class="{toggleRotate:isShowAllList}"></Icon>
+                    </div>
+                </div>
+                <div class="toggle-all-category" v-show="isShowAllList">
+                    <div class="title">全部频道</div>
+                    <ul class="category-list">
+                        <li class="item" :class="{'item-active':(/^\/home$/).test($route.path)}" @click="gotoRecommend">
+                            <span>推荐</span>
+                        </li>
+                        <li 
+                            class="item" 
+                            v-for="(nav,index) in homeNavList" 
+                            :key="nav.id" 
+                            :class="{'item-active':$route.params.id == nav.id}"
+                            @click="gotoCategory(nav.id)"
+                        >
+                            <span>{{nav.name}}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="home-recommend" v-if="isRecommend" ref="recommendWrap">
+                <div class="home-recommend-container">
+                    <Swiper class="home-banner" ref="mySwiper" :options="swiperOptions" v-if="bannerList.length !== 0">
+                        <SwiperSlide class="banner-item" v-for="banner in bannerList" :key="banner.id">
+                            <a :href="banner.targetUrl">
+                                <img :src="banner.picUrl" alt="">
+                            </a>
+                        </SwiperSlide>
+                        <div class="swiper-pagination" slot="pagination"></div>
+                    </Swiper>
+                    <ul class="home-policyDescList">
+                        <li class="policyDescList-item" v-for="(item,index) in policyDescList" :key="index">
+                            <img :src="item.icon" alt="">
+                            <span class="item-text">{{item.desc}}</span>
+                        </li>  
+                    </ul>
+                    <ul class="home-kingkongList" v-if="kingkongList.length !== 0">
+                        <li class="kingkong-item" v-for="(item,index) in kingkongList" :key="index">
+                            <a :href="item.schemeUrl">
                                 <img :src="item.picUrl" alt="">
-                                <div class="price-circle" v-if="item.activityPrice">
-                                    <span>{{item.activityPrice}}</span>
-                                    <del>{{item.originPrice}}</del>
-                                </div>
+                                <p class="kingkong-text" :style="{color:'#' + item.textColor}">{{item.text}}</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="bigPromotionModule" v-if="bigPromotionModule.floorList">
+                        <div class="bigPromotionModule-top">
+                            <img :src="bigPromotionModule.floorList[0].cells[0].picUrl" class="bigModule-back">
+                            <img class="bigModule-up" :src="currentModulePic">
+                        </div>
+                        <div class="bigPromotionModule-middle">
+                            <img class="middle-gif" :src="bigPromotionModule.floorList[1].cells[0].picUrl">
+                        </div>
+                        <div class="bigPromotionModule-bottom">
+                            <div class="bottom-item" v-for="(item,secondIndex) in bigPromotionModule.floorList[2].cells" :key="secondIndex + 'second'">
+                                <img :src="item.picUrl" alt="">
                             </div>
+                            <div class="bottom-item" v-for="(item,index) in bigPromotionModule.floorList[3].cells" :key="index">
+                                <img :src="item.picUrl" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-activity" v-if="indexActivityModule">
+                        <header class="title">- 新人专享礼 -</header>
+                        <div class="activity-show">
+                            <div class="activity-img-big">
+                                <p>新人专享礼包</p>
+                                <img src="https://yanxuan.nosdn.127.net/352b0ea9b2d058094956efde167ef852.png" alt="">
+                            </div>
+                            <div class="activity-img">
+                                <div 
+                                    class="activity-img-small" 
+                                    v-for="(item,index) in indexActivityModule"
+                                    :key="index"
+                                >
+                                    <div class="text">
+                                        <p class="activity-title">{{item.title}}</p>
+                                        <p class="subTitle" v-if="item.subTitle">{{item.subTitle}}</p>
+                                        <p class="tag" v-if="item.tag">{{item.tag}}</p>
+                                    </div>
+                                    <img :src="item.picUrl" alt="">
+                                    <div class="price-circle" v-if="item.activityPrice">
+                                        <span>{{item.activityPrice}}</span>
+                                        <del>{{item.originPrice}}</del>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-categoryHotSellModule">
+                        <header class="title">{{categoryHotSellModule.title}}</header>
+                        <ul class="categoryList">
+                            <li 
+                                class="category-item" 
+                                v-for="(item,index) in categoryHotSellModule.categoryList"
+                                :key="index" 
+                                :class="{'big-item':(index == 0 || index == 1)}"
+                            > 
+                                <a :href="item.targetUrl" v-if="(index == 0 || index == 1)">
+                                    <div class="left">
+                                        <p>{{item.categoryName}}</p>
+                                    </div>
+                                    <div class="right">
+                                        <img :src="item.picUrl" alt="">
+                                    </div>
+                                </a>
+                                <a :href="item.targetUrl" v-else>
+                                    <div class="top">
+                                        <p>{{item.categoryName}}</p>
+                                    </div>
+                                    <div class="bottom">
+                                        <img :src="item.picUrl" alt="">
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <HomeModule :title="`限时购`" :module="flashSaleModule" v-if="flashSaleModule"></HomeModule>
+                    <HomeModule :title="`新品首发`" :module="showNewItemList" v-if="showNewItemList"></HomeModule>
+                    <div class="home-sceneLightShoppingGuideModule" v-if="sceneLightShoppingGuideModule.length !== 0">
+                        <div class="item" v-for="(item,index) in sceneLightShoppingGuideModule" :key="index">
+                            <a :href="item.styleItem.targetUrl">
+                                <div class="shopName">{{item.styleItem.title}}</div>
+                                <div class="shopDesc">{{item.styleItem.desc}}</div> 
+                                <div class="shopImg">
+                                    <img
+                                        v-for="(pic,picIndex) in item.styleItem.picUrlList" 
+                                        :key="picIndex"
+                                        :src="pic" 
+                                    >
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="home-footer">
+                        <div class="origin">
+                            <p class="top">Vue实战项目</p>
+                            <p class="bottom">© Yeessang</p>
                             
                         </div>
                     </div>
                 </div>
-                <div class="home-categoryHotSellModule">
-                    <header class="title">{{categoryHotSellModule.title}}</header>
-                    <ul class="categoryList">
-                        <li 
-                            class="category-item" 
-                            v-for="(item,index) in categoryHotSellModule.categoryList"
-                            :key="index" 
-                            :class="{'big-item':(index == 0 || index == 1)}"
-                        > 
-                            <a :href="item.targetUrl" v-if="(index == 0 || index == 1)">
-                                <div class="left">
-                                    <p>{{item.categoryName}}</p>
-                                </div>
-                                <div class="right">
-                                    <img :src="item.picUrl" alt="">
-                                </div>
-                            </a>
-                            <a :href="item.targetUrl" v-else>
-                                <div class="top">
-                                    <p>{{item.categoryName}}</p>
-                                </div>
-                                <div class="bottom">
-                                    <img :src="item.picUrl" alt="">
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <HomeModule :title="`限时购`" :module="flashSaleModule" v-if="flashSaleModule"></HomeModule>
-                <HomeModule :title="`新品首发`" :module="showNewItemList" v-if="showNewItemList"></HomeModule>
-                <div class="home-sceneLightShoppingGuideModule" v-if="sceneLightShoppingGuideModule.length !== 0">
-                    <div class="item" v-for="(item,index) in sceneLightShoppingGuideModule" :key="index">
-                        <a :href="item.styleItem.targetUrl">
-                            <div class="shopName">{{item.styleItem.title}}</div>
-                            <div class="shopDesc">{{item.styleItem.desc}}</div> 
-                            <div class="shopImg">
-                                <img
-                                    v-for="(pic,picIndex) in item.styleItem.picUrlList" 
-                                    :key="picIndex"
-                                    :src="pic" 
-                                >
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="home-footer">
-                    <div class="origin">
-                        <p class="top">Vue实战项目</p>
-                        <p class="bottom">© Yeessang</p>
-                        
-                    </div>
-                </div>
+                
             </div>
-            
+            <transition name="toTop">
+                <div class="gotoTop" v-show="isShowToTop" @click="gotoTop">
+                    <Icon name="arrow-up"></Icon>
+                </div>
+            </transition>
         </div>
-        <transition name="toTop">
-            <div class="gotoTop" v-show="isShowToTop" @click="gotoTop">
-                <Icon name="arrow-up"></Icon>
-            </div>
-        </transition>
     </div>
+    
 </template>
 
 <script>
@@ -183,12 +202,15 @@
     import moment from 'moment'
     import HomeModule from 'components/wangyi_home_saleModule/wangyi_home_saleModule'
     import { Icon } from 'vant'
+    import CommonHeader from 'components/wangyi_commonHeader/wangyi_commonHeader'
+    import {mapState} from 'vuex'
     import 'swiper/css/swiper.css'
     import '../../common/transition.stylus'
     export default {
         name:'wangyi-home',
         data(){
             return {
+                isLogin:false,
                 homeNavList:[],
                 isShowAllList:false,
                 isRecommend:true,
@@ -227,6 +249,7 @@
             }
         },
         computed:{
+            ...mapState(['userInfo']),
             hour(){
                 return moment(this.flashSaleModule.remainTime).format("HH")
             },
@@ -317,6 +340,11 @@
             },
             gotoTop(){
                 this.recommendScroll.scrollTo(0,0,300)
+            },
+            judegLogin(){
+                if(!this.isLogin){
+                    this.$router.push('/login')
+                }
             }
         },
         async mounted(){
@@ -367,12 +395,54 @@
             SwiperSlide,
             Swiper,
             HomeModule,
-            Icon
+            Icon,
+            CommonHeader
         }
     }
 </script>
 
 <style lang="stylus">
+.home-wrap
+    width 100%
+    height 100%
+    .home-header
+        h1
+            img
+                width 69px
+                height 40px
+        .header-search
+            flex 1
+            height 28px
+            background-color rgb(237,237,237)
+            display flex
+            align-items center
+            justify-content center
+            border-radius 5px
+            .icon
+                color #333
+                font-size 24px
+            input 
+                width 159px
+                height 21px
+                font-size 12px
+                // line-height 15px
+                background-color rgb(237,237,237)
+                &::-webkit-input-placeholder
+                    color #333
+                    font-size 12px
+                    line-height 30px
+                    vertical-align middle
+        .loginMessage
+            width 50px
+            height 100%
+            text-align center
+            line-height 40px
+            span    
+                border 0.5px solid #dd1a1a
+                color #dd1a1a
+                font-size 12px
+                padding 3px 5px
+                border-radius 3px
     .home-container
         width 100%
         height 100%

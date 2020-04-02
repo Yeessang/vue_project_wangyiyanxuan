@@ -1,25 +1,37 @@
 <template>
-    <div class="category-container">
-        <div class="category-nav-wrap">
-            <div class="category-nav">
-                <router-link 
-                    class="nav-item" 
-                    v-for="(nav,index) in categoryNavList" 
-                    :key="index"
-                    :to="`/category/categoryList/${nav.id}`"
-                    @click.native="getCurrentBanner(index,nav.id)"
-                >
-                    {{nav.name}}
-                </router-link>
+    <div class="category-wrap">
+        <CommonHeader class="category-header" :height="44">
+            <template slot="resetHeader">
+                <div class="category-search">
+                    <Icon name="search" class="icon"></Icon>
+                    <input type="text" placeholder="全网搜索，共有25858件好物" @click="$router.push('/search')"/>    
+                </div> 
+            </template>
+        </CommonHeader>
+        <div class="category-container">
+            <div class="category-nav-wrap">
+                <div class="category-nav">
+                    <router-link 
+                        class="nav-item" 
+                        v-for="(nav,index) in categoryNavList" 
+                        :key="index"
+                        :to="`/category/categoryList/${nav.id}`"
+                        @click.native="getCurrentBanner(index,nav.id)"
+                    >
+                        {{nav.name}}
+                    </router-link>
+                </div>
             </div>
+            <router-view :currentBannerUrl="currentBannerUrl"></router-view>
         </div>
-        <router-view :currentBannerUrl="currentBannerUrl"></router-view>
     </div>
 </template>
 
 <script>
     import {SAVECATEGORYID} from 'store/mutation_types'
     import {mapActions} from 'vuex'
+    import CommonHeader from 'components/wangyi_commonHeader/wangyi_commonHeader'
+    import {Icon} from 'vant'
     export default {
         name:'wangyi-category',
         data(){
@@ -48,11 +60,40 @@
             this.currentBannerUrl = this.categoryNavList.find(item => +item.id === +id).bannerUrl
 
 
+        },
+        components:{
+            CommonHeader,
+            Icon
         }
     }
 </script>
 
 <style lang="stylus" scoped>
+.category-wrap
+    width 100%
+    height 100%
+    .category-header
+        .category-search
+            width 100%
+            height 28px
+            background-color rgb(237,237,237)
+            display flex
+            align-items center
+            justify-content center
+            border-radius 5px
+            .icon
+                color #333
+                font-size 24px
+            input 
+                width 159px
+                height 21px
+                font-size 12px
+                background-color rgb(237,237,237)
+                &::-webkit-input-placeholder
+                    color #333
+                    font-size 12px
+                    line-height 30px
+                    vertical-align middle
     .category-container
         margin-top 44px
         background-color #fff

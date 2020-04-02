@@ -1,20 +1,21 @@
 <template>
-    <div>
+    <div class="cart-wrap">
         <header>
             <span>购物车</span>
-            <div class="edit" @click="toggleEdit">
+            <div class="edit" @click="toggleEdit" v-if="userInfo !== null">
                 <span v-if="isEdit">完成</span>
                 <span v-else>编辑</span>
             </div>
             
         </header>
-        <div class="cart-container">
+        <div class="cart-scroll-bar" ref="cartScroll">
+            <div class="cart-container">
             <div class="cart-activity">
                 <span>30天无忧退货</span>
                 <span>48小时快速退款</span>
                 <span>满99元包邮费</span>
             </div>
-            <ul class="cart-list" ref="shopList" v-if="shopCartList">
+            <ul class="cart-list" ref="shopList" v-if="shopCartList && userInfo !== null">
                 <li class="list-item" v-for="(item,index) in shopCartList" :key="index">
                     <div class="item-show">
                         <div class="show-left">
@@ -43,43 +44,51 @@
                     </div>
                 </li>
             </ul>
-        </div>
-        <footer>
-            <label for="choseAll">
-                <input type="checkbox" class="choseBtn" id="choseAll" ref="choseAllBtn" v-model="isChoseAll"/>
-                <span v-if="!isEdit">已选（{{chosedShopArr.length}}）</span>
-                <span v-else>已选（{{chosedEditShopArr.length}}）</span>
-            </label>
-            <div class="footer-right">
-                <div class="totalPrice" v-if="!isEdit">
-                    <span>合计:￥{{totalPrice}}</span>
-                    <span>已优惠:￥{{preferentialPrice}}</span>
-                </div>
-                <div class="operation" :class="{forbidClick:chosedEditShopArr.length === 0 && isEdit}" @click="operaCartShop">
-                    <span v-if="isEdit">删除所选</span>
-                    <span v-else>下单</span>
-                </div>
+            <div class="toLogin" v-if="userInfo === null">
+                <div class="empty-cart"></div>
+                <Button type="danger" class="login-btn" @click="$router.push('/login')">登录</Button>
             </div>
-            
-        </footer>
+        </div>
+    </div>
+        
+    <footer v-if="userInfo !== null">
+        <label for="choseAll">
+            <input type="checkbox" class="choseBtn" id="choseAll" ref="choseAllBtn" v-model="isChoseAll"/>
+            <span v-if="!isEdit">已选（{{chosedShopArr.length}}）</span>
+            <span v-else>已选（{{chosedEditShopArr.length}}）</span>
+        </label>
+        <div class="footer-right">
+            <div class="totalPrice" v-if="!isEdit">
+                <span>合计:￥{{totalPrice}}</span>
+                <span>已优惠:￥{{preferentialPrice}}</span>
+            </div>
+            <div class="operation" :class="{forbidClick:chosedEditShopArr.length === 0 && isEdit}" @click="operaCartShop">
+                <span v-if="isEdit">删除所选</span>
+                <span v-else>下单</span>
+            </div>
+        </div>
+        
+    </footer>
+         
     </div>
     
 </template>
 
 <script>
-    import {Icon} from 'vant'
+    import {Icon,Button} from 'vant'
     import Count from 'components/wangyi_count/wangyi_count'
-    import {mapActions} from 'vuex'
+    import {mapActions,mapState} from 'vuex'
     import {DELSHOP} from 'store/mutation_types'
+    import BScroll from 'better-scroll'
     export default {
         name:'wangyi-cart',
         data(){
             return {
                 isEdit:false,
-                
             }
         },
         computed:{
+            ...mapState(['userInfo']),
             shopCartList(){
                 return this.$store.state.shopCartList
             },
@@ -123,8 +132,13 @@
                 let preferentialPrice = 0
                 this.chosedShopArr.forEach((item) => {
                     preferentialPrice += item.count * (item.originPrice ? (item.originPrice - item.activityPrice) : 0)
+                     
                 })
-                return preferentialPrice
+                let preferentialPriceStr = preferentialPrice.toString()
+                console.log(preferentialPriceStr)
+                let roundPreferentialPriceStr = preferentialPriceStr.substring(0,(preferentialPriceStr.indexOf('.') !== -1) ? (preferentialPriceStr.indexOf('.') + 2) : preferentialPriceStr.length)
+                console.log(roundPreferentialPriceStr)
+                return roundPreferentialPriceStr
             },
             
         },
@@ -178,6 +192,14 @@
                 // }
             // }
         },
+        mounted(){
+            this.$nextTick(() => {
+                this.cartScroll = new BScroll(this.$refs.cartScroll,{
+                    click: true,                 
+                    probeType: 3,
+                })       
+            })
+        },
         // beforeDestroyed(){
         //     console.log(111)
         //     localStorage.setItem('cartList',JSON.stringify(this.shopCartList))
@@ -192,12 +214,16 @@
         // },
         components:{
             Icon,
-            Count
+            Count,
+            Button
         }
     }
 </script>
 
 <style lang="stylus" scoped>
+.cart-wrap
+    width 100%
+    height calc(100% - 94px)
     header 
         width 100%
         height 44px
@@ -205,6 +231,7 @@
         position fixed
         top 0
         left 0
+        z-index 99
         background-color #fff
         display flex
         justify-content space-between
@@ -268,76 +295,94 @@
                 &.forbidClick
                     background-color rgba(200,200,200,.5)
                     color #000
-    .cart-container
+    .cart-scroll-bar
         width 100%
-        height calc(100% - 94px)
-        margin-top 44px
-        .cart-activity
+        height calc(100% - 50px)
+        .cart-container
             width 100%
-            height 35px
-            line-height 35px
-            display flex
-            justify-content space-around
-        .cart-list
-            width 100%
-            .list-item
+            margin-top 44px
+            .toLogin
                 width 100%
-                padding-left 43px
-                box-sizing border-box
-                background-color #fff
-                margin-bottom 10px
-                .item-show
-                    display flex
-                    padding 10px 15px 10px 0
-                    position relative
-                    .show-left
-                        width 86px
-                        height 86px
-                        margin-right 10px
-                        background-color #ccc
-                        img 
-                            width 100%
-                            display block
-                    .show-right 
-                        flex 1
+                height 543px
+                display flex
+                flex-direction column
+                justify-content center
+                align-items center
+                .empty-cart
+                    width 124px
+                    height 124px
+                    background-image url('https://yanxuan-static.nosdn.127.net/hxm/yanxuan-wap/p/20161201/style/img/icon-normal/noCart-d6193bd6e4.png?imageView&type=webp')
+                    background-repeat no-repeat
+                    background-size cover
+                    margin-bottom 30px
+                .login-btn
+                    width 200px
+            .cart-activity
+                width 100%
+                height 35px
+                line-height 35px
+                display flex
+                justify-content space-around
+            .cart-list
+                width 100%
+                .list-item
+                    width 100%
+                    padding-left 43px
+                    box-sizing border-box
+                    background-color #fff
+                    margin-bottom 10px
+                    .item-show
                         display flex
-                        flex-direction column
-                        .shop-top
-                            .shop-name
-                                line-height 16px
-                                font-size 14px
-                                margin-bottom 5px
-                            .shop-choseModel
-                                display inline
-                                align-items center
-                                padding 5px
-                                background-color rgba(200,200,200,.2)
-                                span 
-                                    margin-right 3px
-                        .shop-operation
+                        padding 10px 15px 10px 0
+                        position relative
+                        .show-left
+                            width 86px
+                            height 86px
+                            margin-right 10px
+                            background-color #ccc
+                            img 
+                                width 100%
+                                display block
+                        .show-right 
                             flex 1
                             display flex
-                            justify-content space-between
-                            align-items flex-end
-                            .newPrice
-                                margin-right 5px
-                                font-size 14px
-                                color red
-                            .oldPrice
-                                color #999
-                    input[type="checkbox"]
-                        position absolute
-                        left -35px
-                        top 50%
-                        transform translateY(-50%)
-                        border-radius 50%
-                        border 1px solid rgba(200,200,200,.5)
-                        width 20px
-                        height 20px
-                        outline none
-                        -webkit-appearance none
-                        &:checked
-                            background-image url('../../static/images/chose.jpg')
-                            background-size 200%
-                            background-position center
+                            flex-direction column
+                            .shop-top
+                                .shop-name
+                                    line-height 16px
+                                    font-size 14px
+                                    margin-bottom 5px
+                                .shop-choseModel
+                                    display inline
+                                    align-items center
+                                    padding 5px
+                                    background-color rgba(200,200,200,.2)
+                                    span 
+                                        margin-right 3px
+                            .shop-operation
+                                flex 1
+                                display flex
+                                justify-content space-between
+                                align-items flex-end
+                                .newPrice
+                                    margin-right 5px
+                                    font-size 14px
+                                    color red
+                                .oldPrice
+                                    color #999
+                        input[type="checkbox"]
+                            position absolute
+                            left -35px
+                            top 50%
+                            transform translateY(-50%)
+                            border-radius 50%
+                            border 1px solid rgba(200,200,200,.5)
+                            width 20px
+                            height 20px
+                            outline none
+                            -webkit-appearance none
+                            &:checked
+                                background-image url('../../static/images/chose.jpg')
+                                background-size 200%
+                                background-position center
 </style>

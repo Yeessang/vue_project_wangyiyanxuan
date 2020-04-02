@@ -1,68 +1,73 @@
 <template>
-    <div class="worthBuying-container" ref="wrapper">
-        <div class="scroll-bar">
-            <div class="worth-navs">
-                <div class="worth-bg">
-                    <div class="bg-title">
-                        <img src="../../static/images/worthBuying.png" />
-                        <span>严选购物 用心生活</span>
+    <div class="worthBuying-wrap">
+        <CommonHeader :title="'值得买'" :height="50"></CommonHeader>
+        <div class="worthBuying-container" ref="wrapper">
+            <div class="scroll-bar">
+                <div class="worth-navs">
+                    <div class="worth-bg">
+                        <div class="bg-title">
+                            <img src="../../static/images/worthBuying.png" />
+                            <span>严选购物 用心生活</span>
+                        </div>
+                    </div>
+                    <div class="worth-swiper-wrap">
+                        <swiper ref="mySwiper" :options="swiperOptions" class="worth-swiper">
+                            <swiper-slide class="swiper-item" v-for="(nav,index)  in navList" :key="index">
+                                <img :src="nav.picUrl" alt="">
+                                <p class="mainTitle">{{nav.mainTitle}}</p>
+                                <p class="viceTitle">{{nav.viceTitle}}</p>
+                            </swiper-slide>
+                        </swiper>
+                        
+                        <div class="my-paganation">
+                            <p class="my-paganation-item" :class="{active:swiper.activeIndex === 0}"></p>
+                            <p class="my-paganation-item" :class="{active:swiper.activeIndex === 1}"></p>
+                            <p class="my-paganation-item" :class="{active:swiper.activeIndex === 2}"></p>
+                            <p class="my-paganation-item" :class="{active:swiper.activeIndex === 3}"></p>
+                            <p class="my-paganation-item" :class="{active:swiper.activeIndex === 4}"></p>
+                        </div>
                     </div>
                 </div>
-                <div class="worth-swiper-wrap">
-                    <swiper ref="mySwiper" :options="swiperOptions" class="worth-swiper">
-                        <swiper-slide class="swiper-item" v-for="(nav,index)  in navList" :key="index">
-                            <img :src="nav.picUrl" alt="">
-                            <p class="mainTitle">{{nav.mainTitle}}</p>
-                            <p class="viceTitle">{{nav.viceTitle}}</p>
-                        </swiper-slide>
-                    </swiper>
-                    
-                    <div class="my-paganation">
-                        <p class="my-paganation-item" :class="{active:swiper.activeIndex === 0}"></p>
-                        <p class="my-paganation-item" :class="{active:swiper.activeIndex === 1}"></p>
-                        <p class="my-paganation-item" :class="{active:swiper.activeIndex === 2}"></p>
-                        <p class="my-paganation-item" :class="{active:swiper.activeIndex === 3}"></p>
-                        <p class="my-paganation-item" :class="{active:swiper.activeIndex === 4}"></p>
-                    </div>
-                </div>
-            </div>
-            <div class="worth-list">
-                <div class="column-group" v-for="(worthGroup,worthGroupIndex) in showWorthList" :key="worthGroupIndex">
-                    <div class="worth-item" v-for="(worth,worthIndex) in worthGroup" :key="worthIndex">
-                        <img :src="worth.data.picUrl" alt="">
-                        <div class="haveAuthor" v-if="worth.data.nickname">
-                            <p class="item-content">{{worth.data.title}}</p>
-                            <div class="item-author">
-                                <div class="author-left">
-                                    <img :src="worth.data.avatar" alt="">
-                                    <span>{{worth.data.nickname}}</span>
-                                </div>
-                                <div class="author-right">
-                                    <Icon name="eye-o" class="icon"></Icon>
-                                    <span>{{worth.data.readCount > 10000 ? Math.round(worth.data.readCount / 1000) + 'k' : worth.data.readCount}}</span>
+                <div class="worth-list">
+                    <div class="column-group" v-for="(worthGroup,worthGroupIndex) in showWorthList" :key="worthGroupIndex">
+                        <div class="worth-item" v-for="(worth,worthIndex) in worthGroup" :key="worthIndex">
+                            <img :src="worth.data.picUrl" alt="">
+                            <div class="haveAuthor" v-if="worth.data.nickname">
+                                <p class="item-content">{{worth.data.title}}</p>
+                                <div class="item-author">
+                                    <div class="author-left">
+                                        <img :src="worth.data.avatar" alt="">
+                                        <span>{{worth.data.nickname}}</span>
+                                    </div>
+                                    <div class="author-right">
+                                        <Icon name="eye-o" class="icon"></Icon>
+                                        <span>{{worth.data.readCount > 10000 ? Math.round(worth.data.readCount / 1000) + 'k' : worth.data.readCount}}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="notAuthor" v-else-if="(!worth.data.nickname && worth.data.title)" :style="{backgroundColor:'#'+worth.data.topicId}">
-                            <div class="title">{{worth.data.title}}</div>
-                            <div class="line"></div>
-                            <div class="subTitle">{{worth.data.subTitle}}</div>
-                        </div>
-                        <div class="buyNow" v-if="worth.data.buyNow !== null && worth.data.buyNow !== undefined">
-                            <div class="buyNow-left">{{worth.data.buyNow.itemName}}</div>
-                            <div class="buyNow-right">去购买></div>
+                            <div class="notAuthor" v-else-if="(!worth.data.nickname && worth.data.title)" :style="{backgroundColor:'#'+worth.data.topicId}">
+                                <div class="title">{{worth.data.title}}</div>
+                                <div class="line"></div>
+                                <div class="subTitle">{{worth.data.subTitle}}</div>
+                            </div>
+                            <div class="buyNow" v-if="worth.data.buyNow !== null && worth.data.buyNow !== undefined">
+                                <div class="buyNow-left">{{worth.data.buyNow.itemName}}</div>
+                                <div class="buyNow-right">去购买></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
 </template>
 
 <script>
     import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
     import BScroll from 'better-scroll'
     import {Icon} from 'vant'
+    import CommonHeader from 'components/wangyi_commonHeader/wangyi_commonHeader'
     import 'swiper/css/swiper.css'
     export default {
         name:'wangyi-worthBuying',
@@ -170,12 +175,16 @@
         components: {
             Swiper,
             SwiperSlide,
-            Icon
+            Icon,
+            CommonHeader
         },
     }
 </script>
 
 <style lang="stylus">
+.worthBuying-wrap
+    width 100%
+    height 100%
     .worthBuying-container
         width 100%
         height calc(100% - 100px)
@@ -301,9 +310,10 @@
                                     white-space nowrap
                                     text-overflow ellipsis
                             .author-right
+                                display flex
                                 .icon
                                     position relative
-                                    top 2px
+                                    top 1px
                                     margin-right 3px
                     .notAuthor
                         padding 14px 9px 18px

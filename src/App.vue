@@ -3,7 +3,7 @@
       <keep-alive exclude="wangyi-shop-detail">
         <router-view></router-view>
       </keep-alive>
-      <app-footer></app-footer>
+      <app-footer  v-if="$route.meta.showFooter"></app-footer>
     </div>
     
 </template>

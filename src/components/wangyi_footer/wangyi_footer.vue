@@ -15,6 +15,9 @@
         <div class="footer-item" :class="{active:$route.path.includes('/cart')}" @click="toPage('/cart')">
             <Icon name="shopping-cart" class="icon"></Icon>
             <span>购物车</span>
+            <div class="cart-count" v-if="cartCount >= 0 && userInfo !== null">
+                <span>{{cartCount}}</span>
+            </div>
         </div>
         <div class="footer-item" :class="{active:$route.path.includes('/personal')}" @click="toPage('/personal')">
             <Icon name="manager" class="icon"></Icon>
@@ -25,12 +28,20 @@
 
 <script>
     import {Icon} from 'vant'
+    import {mapGetters,mapState} from 'vuex'
     export default {
         name:"wangyi-footer",
+        computed:{
+            ...mapGetters(['cartCount']),
+            ...mapState(['userInfo'])
+        },
         methods: {
             toPage(path){
                 this.$router.replace(path)
             }
+        },
+        mounted(){
+            console.log(this.cartCount)
         },
         components:{
             Icon
@@ -57,6 +68,20 @@
             display flex
             flex-direction column
             justify-content center
+            position relative
+            .cart-count
+                position absolute
+                right 18px
+                top 0px
+                width 16px
+                height 16px
+                text-align center
+                line-height 16px
+                background-color #dd1a1a
+                color #fff
+                border-radius 50%
+                span
+                    font-size 12px
             .icon
                 font-size 24px
                 margin-bottom 2px

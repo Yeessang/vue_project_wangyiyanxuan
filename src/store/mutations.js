@@ -1,4 +1,4 @@
-import {SAVECATEGORYID,ADDSHOPTOCART,DELSHOP,CHANGEBUYCHOSEN} from './mutation_types'
+import {SAVECATEGORYID,ADDSHOPTOCART,DELSHOP,CHANGELOGIN} from './mutation_types'
 
 export default {
     [SAVECATEGORYID](state,data){
@@ -40,4 +40,12 @@ export default {
         })
         localStorage.setItem('cartList',JSON.stringify(state.shopCartList))
     },
+    [CHANGELOGIN](state,userInfo){
+        state.userInfo = userInfo
+        if(userInfo){
+            localStorage.setItem('userinfo',JSON.stringify(userInfo))
+        }else{
+            localStorage.removeItem('userinfo')
+        }
+    }
 }

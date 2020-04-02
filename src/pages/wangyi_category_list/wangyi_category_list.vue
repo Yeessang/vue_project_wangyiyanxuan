@@ -54,11 +54,15 @@
                 this.initShowListScroll()
             })
         },
-        // watch: {
-        //     categoryId(value){
-        //         this.getCategoryList()
-        //     }
-        // },
+        watch: {
+            categoryId(value){
+                this.getCategoryList()
+                this.$nextTick(() => {
+                    this.showListScroll.refresh()
+                    this.showListScroll.scrollTo(0,0)
+                })
+            }
+        },
         beforeRouteEnter (to, from, next) {
             if(store.state.storeCategoryId){
                 if(+store.state.storeCategoryId === +to.params.id){
